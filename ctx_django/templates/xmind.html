@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+        <title>Base Template</title>
+    {% endblock %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    <header class="head">
+        <div class="head-logo"><a href="/" class="head-logo"><b>DragonSite</b></a></div>
+        <div class="user-login">
+            {% if request.user.is_authenticated %}
+                <p class="user-login">欢迎您，{{ request.user }}</p>
+                {% if request.user.is_superuser %}
+                    <a href="/admin">管理界面</a>
+                {% endif %}
+                <a href="/login">退出登录</a>
+            {% else %}
+                <a href="/login">请登录</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="sidebar">
+        <div class="folder-sorted" id="sidebar-netdisk">
+            <a href={% url "netdisk:index" %}>个人文件</a>
+        </div>
+    </div>
+
+    <div class="content-core">
+        {% block content-core %}
+            <div style="display:flex; justify-content:center; align-items:center;width:100%;height: 100%">
+                <h1 style="color:rgba(0,0,0,0.1)"> Welcome DragonSite</h1>
+            </div>
+        {% endblock %}
+    </div>
+
+    <footer class="footer">
+       <ul class="information">
+           <li class="information">
+               <a href="">
+                   <img src="{% static 'image/github.png' %}" width="100px" alt="github">
+               </a>
+           </li>|
+           <li class="information">问题反馈：674658532@qq.com</li>
+       </ul>
+    </footer>
+</body>
+</html>
+

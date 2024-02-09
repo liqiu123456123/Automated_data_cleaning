@@ -1,0 +1,82 @@
+/* BaseSetting */
+html{height:100%; width:100%;}
+body{margin: 0; padding: 0}
+a:link{text-decoration: none; color:#999}
+a:visited{color:#999}
+a:hover{text-decoration: underline;}
+
+/* Head */
+.head {
+    margin: 0; padding: 0; height: 10%; width:100%;
+    position:absolute; top:0;
+    background: floralwhite;
+    box-shadow:0 0 5px 0 #000000}
+
+.head-logo{
+    font-size:6vh;
+    position:absolute; top:50%;
+    transform: translate(0, -50%);}
+
+a.head-logo:link,a.head-logo:visited{color: black}
+a.head-logo:hover{text-decoration: none}
+
+.user-login {
+    font-size:20px;
+    line-height:100%;
+    position: absolute; right:0; bottom:0;
+    padding:10px}
+
+p.user-login{
+    margin: 0;
+    padding:5px 0 5px 0;
+    position: relative;
+    text-align:center;}
+
+/* SideBar */
+.sidebar{
+    width: 15%; height: 80%; margin: 0; padding:4% 0 0 0;
+    position: absolute; top:10%;
+    border-right-style: solid; border-right-width:1px;
+    display:flex;flex-direction: column;align-items: center;
+    overflow-y: auto;overflow-x: hidden}
+
+.folder-sorted{
+    background:#e5e5e5; margin:20px 0;
+    font-size:35px; height:100px;width:100%;
+    border-radius:10px;box-shadow:0px 0px 2px 2px #999 inset;
+    display:flex;align-items:center;justify-content:center;}
+
+div.folder-sorted:hover{background:#bdd5e7}
+
+
+/* Main */
+.content-core{
+    width: 84%; height: 85%;margin: 0; padding: 0;
+    position: absolute;top:10%;right:0;
+    display: flex;align-items: center;flex-direction: column;
+    }
+
+/* Footer */
+/* Footer */
+.footer{
+    background: floralwhite;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 5%;
+    box-shadow:0 0 5px 0 #000000;
+    }
+
+ul.information{
+    list-style:none;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    display:flex;
+    padding:0;
+    margin:0;
+    align-items: center;
+    }

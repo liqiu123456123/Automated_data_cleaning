@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>DragonSite-Preview</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/folder.css' %}">
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/preview.js' %}"></script>
+{% endblock %}
+
+
+{% block content-core %}
+    <button class="folder-button"><a href="{% if file.owner %}{% url 'netdisk:folder_show' path=file.dir.path %}{% else %}{% url 'publicdisk:folder_show' path=file.dir.path %}{% endif %}" style="git push origincolor: black">返回上一级</a></button>
+    <div class="folder-container" style="justify-content: center;">
+        <p id="url" style="display: none">{% if file.owner %}{% url 'netdisk:download' path=file.get_url_path %}{% else %}{% url 'publicdisk:download' path=file.get_url_path %}{% endif %}</p>
+        {% if file.file_type == 'video' %}
+            <video id="video" src="#" height=600px controls ></video>
+        {% elif file.file_type == 'image' %}
+            <img id="image" src="#" alt="图片" height=80%>
+        {% else %}
+            <div>该文件无法预览</div>
+        {% endif %}
+    </div>
+{% endblock %}

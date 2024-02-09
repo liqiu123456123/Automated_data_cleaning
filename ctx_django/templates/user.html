@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>{{ tab_title }}</title>
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/user.js' %}"></script>
+</head>
+<body>
+<div class="page">
+    <div class="loginwarrp">
+        <div class="logo">{{ page_title }}</div>
+        <div class="login_form">
+            <form name="Login" method="post" action="">
+                {% csrf_token %}
+                <ul>
+                    <li class="login-item">
+                        <span>用户名：</span>
+                        <input type="text" name="username" class="login_input">
+                        <span id="count-msg" class="error"></span>
+                    </li>
+                    <li class="login-item">
+                        <span>密　码：</span>
+                        <input type="password" name="password" class="login_input">
+                        <span id="password-msg" class="error"></span>
+                    </li>
+                    {% if confirm_password %}
+                    <li class="login-item">
+                        <span>确认密码：</span>
+                        <input type="password" name="cp" class="login_input">
+                        <!-- 注意：这里应该使用不同的ID以避免冲突 -->
+                        <span id="confirm-password-msg" class="error"></span>
+                    </li>
+                    {% endif %}
+                </ul>
+                <p>邮 箱：<input style="width: 250px;margin-left: 12px" name="email" id="email" type="email" placeholder="请输入邮箱"></p>
+                <p>
+                    验证码：<input style="width: 100px" name="value" type="text" placeholder="请输入验证码">
+                    <label id="zemail" for="value">获取验证码</label><label style="color:red;" id="stat"></label>
+                </p>
+
+                <div>{{ tips }}</div>
+                <div class="login-sub">
+                    <!-- 注意：这里使用div代替li，因为这不是列表项 -->
+                    <input type="submit" name="Submit" value="{{ button }}">
+                    <div class="turn-url">
+                        <a style="color: #45B572;" href="{% url url_name %}">>>{{ url_text }}</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 注意：确保所有脚本在</body>标签之前加载，但这里canvas-particle.js应该在自定义脚本之后加载，因为它可能依赖于页面元素或其他脚本 -->
+<script type="text/javascript">
+    window.onload = function() {
+        var config = {
+            vx : 4,
+            vy : 4,
+            height : 2,
+            width : 2,
+            count : 100,
+            color : "121, 162, 185",
+            stroke : "100, 200, 180",
+            dist : 6000,
+            e_dist : 20000,
+            max_conn : 10
+        };
+        CanvasParticle(config);
+    };
+</script>
+<script src="{% static 'js/canvas-particle.js' %}"></script>
+
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<script>
+    $(function () {
+        $('#zemail').click(function () {
+            email = $('#email').val();
+            $.ajax(
+                {
+                    url:'sendemail/?email='+email,  <!--传给传给视图函数的请求-->
+                    type:'get',
+                    data:'',
+                    success:function (data) {
+                         $('#stat').text(data['data'])
+                    }
+                }
+            )
+        })
+    })
+</script>
+</body>
+</html>

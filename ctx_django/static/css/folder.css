@@ -1,0 +1,50 @@
+input::-webkit-input-placeholder{color: #c5c5c5;}
+input[type=text]{text-align:center;}
+
+.folder-container{font-size:12pt;
+    width:99%;height:90%;background:white;position:absolute;top:10%;right: 0;;overflow-y:auto;
+    display:flex;flex-direction: row;flex-wrap: wrap;align-content: flex-start;
+}
+
+#disk-menu{
+    display: flex;align-items: center;
+}
+
+#progress{display: none;align-items: center;margin-left:10px;}
+#progress-total{height:20px;width:100px;border:2px solid gray;float:left;margin-right:10px;}
+#progress-finish{height:100%;width:0;background:gray;}
+#progress-rate{margin-right:20px}
+
+.folder-menu{
+    width: 100%;display: flex;justify-content: space-between;font-size:18pt;
+}
+
+#path-nav{
+    display:flex;align-items: center;
+}
+.folder-button{
+    background: #3498db;border-radius:4px;font-size:18px;margin:6px 2px;
+
+}
+.folder-button:hover {
+    background-color: #2572a5; /* Green */
+    color: white;
+}
+
+.folder-detail{
+    width:200px;height:200px;float:left;display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.folder-detail :hover{text-decoration:none}
+
+#folder_input{
+    width:20%;height:20%;float:left;flex-direction:column;align-items:center;text-align:center;display:none;
+
+}
+
+.hidden-option{
+    display:none;
+}
+
+a.name{display: flex;flex-direction:column;align-items:center;text-align:center;}
+
+.item-icon{width:100px;height:100px}

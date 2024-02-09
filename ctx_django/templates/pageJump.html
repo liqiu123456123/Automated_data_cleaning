@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>跳转界面</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pageJump.css' %}">
+{% endblock %}
+
+{% block content-core %}
+    <div id="jumpPage" style="">
+    <p id="jumpPage-message">{{ message }}, <span id="sp">2</span>秒后返回......</p>
+    <a href="{{ request.META.HTTP_REFERER }}">
+         <button> 立即返回 </button>
+    </a>
+    </div>
+
+    <script>
+        onload=function () {setInterval(go,1000)};
+        var x=1;
+        function go() {
+            if (x>=0){
+                document.getElementById("sp").innerText=x;}
+            else {
+                location.href= "{{ request.META.HTTP_REFERER }}";}
+            x--;}
+    </script>
+
+{% endblock %}
