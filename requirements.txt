@@ -1,0 +1,17 @@
+beautifulsoup4==4.12.3
+Django==4.2.9
+djangorestframework==3.14.0
+filetype==1.2.0
+opencv_python==4.9.0.80
+openpyxl==3.1.2
+pandas==2.2.0
+pdfplumber==0.10.3
+Pillow==10.2.0
+PyMySQL==1.1.0
+PyPDF2==3.0.1
+PyQt5==5.15.10
+PyQt5_sip==12.13.0
+PyQt_Fluent_Widgets==1.5.0
+Requests==2.31.0
+scikit_learn==1.4.0
+tqdm==4.66.1
