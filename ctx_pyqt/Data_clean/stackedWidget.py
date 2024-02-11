@@ -1,5 +1,5 @@
-from deal_tool.CTX.ctx_pyqt.Data_clean.TabItem import *
-from deal_tool.CTX.ctx_pyqt.Data_clean.configs import tables
+from ctx_pyqt.Data_clean.TabItem import *
+from ctx_pyqt.Data_clean.configs import tables
 
 class StackedWidget(QStackedWidget):
     def __init__(self, parent):

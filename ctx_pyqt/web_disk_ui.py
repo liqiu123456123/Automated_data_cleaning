@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit, PushButton
 
 from folder_file_ui import FolderFileUi
-from requests_test import Requests_Api
+from project_requests import Requests_Api
 
 
 class NewFolder(MessageBoxBase):

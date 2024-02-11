@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from deal_tool.CTX.ctx_pyqt.Data_clean.ComboCheckBox import ComboCheckBox
+from Data_clean.ComboCheckBox import ComboCheckBox
 # from new_table_main_win import Menu
 import global_var
 import copy

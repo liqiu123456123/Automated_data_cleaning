@@ -5,7 +5,7 @@ from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import LineEdit, PushButton
 from PyQt5.Qt import *
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout
-from requests_test import Requests_Api
+from project_requests import Requests_Api
 
 
 class CustomMessageBox(QWidget):

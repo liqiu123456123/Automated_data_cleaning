@@ -155,7 +155,7 @@ def index(request):
         request_data['ip'] = request.META['REMOTE_ADDR']
     # print(request_data)
 
-    return render(request, 'xmind.html')
+    return render(request, 'home.html')
 
 
 def about(request, id):
