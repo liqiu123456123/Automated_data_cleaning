@@ -1,5 +1,10 @@
 <div id="top"></div><div id="top"></div>
 
+* 联系作者
+* 邮箱：liqiu6789@qq.com
+* qq：674658532
+* 微信:liqiu6746
+
 # 基于Pyqt和Django的云数据自动化清洗系统
 <!-- 目录 -->
 <details>
@@ -43,13 +48,13 @@
 * 对你有帮助请狠狠赞助博主！你的赞助对我很重要！
 
 1、启动redis
-![img.png](img.png)
+![img.png](readme_img%2Fimg.png)
 
 2、运行django
 
 python .\manage.py runserver
 
-![img_1.png](img_1.png)
+![img_1.png](readme_img%2Fimg_1.png)
 
 3、启动celery
 celery -A ctx_django worker --loglevel=info -P eventlet
@@ -57,41 +62,40 @@ celery -A ctx_django worker --loglevel=info -P eventlet
 
 <p align="right">(<a href="#top">返回顶部</a>)</p>
 
-![img_2.png](img_2.png)
+![img_2.png](readme_img%2Fimg_2.png)
 
 4、运行 new_ctx_win.py进入主界面
-![img_3.png](img_3.png)
+![img_3.png](readme_img%2Fimg_3.png)
 
 5、从磁盘选择文件进行读入，读入完成解锁数据选项
-![img_4.png](img_4.png)
+![img_4.png](readme_img%2Fimg_4.png)
 
 6、点击数据排序，排序菜单添加到已选操作栏中
-![img_5.png](img_5.png)
 
+![img_5.png](readme_img%2Fimg_5.png)
 7、在已选操作栏中点击排序菜单
-![img_6.png](img_6.png)
 
+![img_6.png](readme_img%2Fimg_6.png)
 8、在排序菜单中，选择月份降序排列，然后点击CTX,启动按钮！
 
 月份降序排列后：
-![img_7.png](img_7.png)
+![img_7.png](readme_img%2Fimg_7.png)
 
 9、点击注册/登陆按钮，开始进行云盘注册
-![img_8.png](img_8.png)
-
+![img_8.png](readme_img%2Fimg_8.png)
 10、切换到注册界面，进行注册
 
 填入邮箱，收到验证码后，输入验证码
-![img_9.png](img_9.png)
+![img_9.png](readme_img%2Fimg_9.png)
 
 11、注册后进行登陆，登陆成功会弹出云盘菜单
 
-![img_10.png](img_10.png)
+![img_10.png](readme_img%2Fimg_10.png)
 
 12、点击云盘进入云盘界面，可像网盘一样进行文件上传和下载
-![img_11.png](img_11.png)
+![img_11.png](readme_img%2Fimg_11.png)
 
-![img_12.png](img_12.png)
+![img_12.png](readme_img%2Fimg_12.png)
 
 
 <!-- 开始 -->
