@@ -4,10 +4,8 @@ import os
 from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from rest_framework import status
-from rest_framework.decorators import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import APIView, api_view
 from rest_framework.response import Response
-
 from .models import File, Folder, UserModel
 from .serializers import FileSerializer, FolderSerializer
 from .utils import handle_upload_files, get_unique_folder_name, remove_blank
@@ -22,11 +20,8 @@ def index(request):
 def upload(request, path):
     if request.method == "POST":
         files = request.FILES.getlist("files")
-        print("request.post", request.FILES)
-        print("upload", request.user)
         parent = get_object_or_404(Folder, path=path, owner=request.user)
         handle_upload_files(files, parent, request.user)
-        print("handle_upload_files", files, parent, request.user)
         return render(request, 'pageJump.html', {'message': '上传成功'})
 
 
@@ -49,41 +44,11 @@ def preview(request, path):
         return render(request, 'preview.html', context={'file': file})
 
 
-# def folder_show(request, path):
-#     if request.method == 'GET':
-#         if path == "":
-#             path = "root"
-#         # 获取所有数据
-#         all_data = Folder.objects.all()
-#
-#         # 遍历数据并输出
-#         # for data in all_data:
-#         #     print(data.name, data.path, data.parent, data.owner, data.creat_time)
-#         basedir = get_object_or_404(Folder, path=path, owner=request.user)
-#         # 获取要展示的文件夹和文件
-#         folder = Folder.objects.filter(parent=basedir, owner=request.user)
-#         files = File.objects.filter(dir=basedir, owner=request.user)
-#         # 用于直接返回多层目录
-#         path_link = path_to_link(basedir)
-#         context = {'folders': folder, 'files': files, 'path': path, 'path_link': path_link}
-#         # print("context", context)
-#         return render(request, "netdisk/folder.html", context)
-
-# class UploadedFileViewSet(viewsets.ModelViewSet):
-#     print(222222222222222)
-#     queryset = File.objects.all()
-#     print("queryset",queryset)
-#     serializer_class = UploadedFileSerializer
-#     print("serializer_class",serializer_class)
-
 class UpFileAPIView(APIView):
     def create(self, request, format=None):
         file_obj = request.FILES.get('file')
-        print(file_obj)
         # 在这里可以将上传的文件保存到服务器上
         return Response({'status': 'success'})
-
-
 
 
 @api_view(['GET', 'POST'])
@@ -126,15 +91,11 @@ def folder_show(request, path, format=None):
             'files': serializer_file.data
         })
 
-    # return Response(serializer.data)
-
     elif request.method == 'PUT':
         #  利用put请求删除文件
         if "size" in request.data:
-            print("进入更新/删除文件函数")
             file = File.objects.get(id=request.data["id"])
             if "del_file" in request.data["name"]:
-                print("开始删除文件")
                 file.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             else:
@@ -151,7 +112,6 @@ def folder_show(request, path, format=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        print("进入删除views")
         folder.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

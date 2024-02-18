@@ -1,11 +1,8 @@
 import sys
 
-from qfluentwidgets import RoundMenu, Action, MenuAnimationType
-from qfluentwidgets import FluentIcon as FIF
-from qfluentwidgets import LineEdit, PushButton
-from PyQt5.Qt import *
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout
-from project_requests import Requests_Api
+from qfluentwidgets import RoundMenu, Action, MenuAnimationType, LineEdit, PushButton, FluentIcon as FIF
+from PyQt5.Qt import pyqtSignal, QPixmap, QContextMenuEvent
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton
 
 
 class CustomMessageBox(QWidget):
@@ -47,6 +44,7 @@ class CustomMessageBox(QWidget):
 class FolderFileUi(QPushButton):
     signal_rename_def = pyqtSignal(tuple)
     signal_del_def = pyqtSignal(str)
+
     def __init__(self, file_name=None, file_type=None):
         super().__init__()
         # file_type：1代表文件夹，0代表文件
@@ -91,29 +89,8 @@ class FolderFileUi(QPushButton):
         # 更新ui，更新数据库
         # 判断是文件还是文件夹
         self.signal_rename_def.emit(text_tuple)
-        # flag =1
-        # if "." in self.folds_name_label.text():
-        #     if text in context["files"]:
-        #         flag = 0
-        #         msg_box = QMessageBox(QMessageBox.Critical, '错误提示', '名字重复，请重新输入')
-        #         msg_box.exec_()
-        # else:
-        #     if text in context["folders"]:
-        #         flag = 0
-        #         msg_box = QMessageBox(QMessageBox.Critical, '错误提示', '名字重复，请重新输入')
-        #         msg_box.exec_()
-        # if flag:
-        #     # ui更新名字
-        #     self.folds_name_label.setText(text)
-        #     self.folds_name_label.update()
-        #     # 数据库更新记录
-        #     self.demo = Requests_Api()
-        #     # 发送更新请求
 
     def del_fun(self):
-        # 更新ui
-        # 更新数据库中的信息
-        # 删了后重新刷新UI
         # post请求，调用视图中的删除方法
         self.signal_del_def.emit(self.folds_name_label.text())
         self.folds_image_label.deleteLater()

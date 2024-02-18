@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QWidget
+from PyQt5.QtCore import Qt
 from data_cleaning_win import Menu
 
 
@@ -19,8 +19,6 @@ class CtxUi(QWidget):
         hbox.setContentsMargins(0, 0, 0, 0)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setLayout(hbox)
-
-
 
 
 if __name__ == '__main__':

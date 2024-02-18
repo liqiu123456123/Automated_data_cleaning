@@ -1,8 +1,8 @@
 import json
 import mimetypes
 import re
-
 import requests
+
 from bs4 import BeautifulSoup
 
 
@@ -98,9 +98,7 @@ class Requests_Api:
             "owner": owner
         }
         res = self.session.post(url=url, data=data, headers=header)
-        print("新建")
-        if "200" in res:
-            print("新建成功")
+
 
     @login_decorator
     def get_token(self):
@@ -124,16 +122,8 @@ class Requests_Api:
         url = url
         fileObject = {'files': (file_path, open(file_path, 'rb'), mimetypes.guess_type(file_path)[0])}
 
-        # 发送POST请求上传文件
-        # token = self.get_token()
         response = self.session.post(url, headers=header, files=fileObject)
 
-        # 检查响应
-        if response.status_code == 200:
-            print('文件上传成功！')
-        else:
-            print('文件上传失败，状态码：', response.status_code)
-            print('响应内容：', response.text)
 
     @login_decorator
     def down_file(self, url, file_path):
@@ -144,7 +134,7 @@ class Requests_Api:
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
                     code.write(chunk)
-        print("下载完成")
+
 
     @login_decorator
     def update_name(self, url, data):
@@ -153,7 +143,7 @@ class Requests_Api:
         token = self.get_token()
         header = {"X-CSRFTOKEN": token}
         res = self.session.put(url, data=data, headers=header)
-        print("修改文件夹名完成")
+
 
     @login_decorator
     def update_file_name(self, url, data):
@@ -182,11 +172,3 @@ class Requests_Api:
         token = self.get_token()
         header = {"X-CSRFTOKEN": token}
         res = self.session.put(url, data=data, headers=header)
-        print("删除文件res", res)
-        print("删除文件完成")
-
-
-
-if __name__ == '__main__':
-    demo = Requests_Api()
-    demo.upload_file()
