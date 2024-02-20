@@ -1,14 +1,13 @@
-# Create your views here.
 import os
 
 from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from rest_framework import status
-from rest_framework.decorators import APIView, api_view
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import File, Folder, UserModel
 from .serializers import FileSerializer, FolderSerializer
-from .utils import handle_upload_files, get_unique_folder_name, remove_blank
+from .utils import handle_upload_files
 
 
 def index(request):
@@ -34,21 +33,6 @@ def download(request, path):
         response["Content-Length"] = file.size
         response['Content-Disposition'] = f'attachment;filename="{name}"'
         return response
-
-
-def preview(request, path):
-    if request.method == 'GET':
-        name = os.path.basename(path)
-        dir = os.path.dirname(path)
-        file = get_object_or_404(File, name=name, dir__path=dir, owner=request.user)
-        return render(request, 'preview.html', context={'file': file})
-
-
-class UpFileAPIView(APIView):
-    def create(self, request, format=None):
-        file_obj = request.FILES.get('file')
-        # 在这里可以将上传的文件保存到服务器上
-        return Response({'status': 'success'})
 
 
 @api_view(['GET', 'POST'])
@@ -79,7 +63,6 @@ def folder_show(request, path, format=None):
     except Folder.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
-        serializer = FolderSerializer(folder)
         basedir = get_object_or_404(Folder, path=path, owner=request.user)
         # 获取要展示的文件夹和文件
         folder = Folder.objects.filter(parent=basedir, owner=request.user)
@@ -112,69 +95,6 @@ def folder_show(request, path, format=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
+        # 删除文件夹
         folder.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-def create(request, path):
-    #  POST：新建
-    if request.method == 'POST':
-        parent = get_object_or_404(Folder, path=path, owner=request.user)
-        name = remove_blank(request.POST.get("folder_name"))
-        # 检查是否有重名
-        folder_list = Folder.objects.filter(parent=parent, owner=request.user)
-        unique_name = get_unique_folder_name(name, folder_list)
-        # 创建文件夹
-        path = "/".join([path, unique_name])
-        Folder.objects.create(name=unique_name, path=path, parent=parent, owner=request.user)
-
-        return redirect(reverse("netdisk:folder_show", kwargs={"path": parent.path}))
-
-
-def rename(request, type, path):
-    if request.method == 'POST':
-        new_name = remove_blank(request.POST.get("new_name"))
-        if type == 'folder':
-            obj = Folder.objects.get(path=path, owner=request.user)
-            folder_list = Folder.objects.filter(parent=obj.parent, owner=request.user)
-            unique_name = get_unique_folder_name(new_name, folder_list)
-            obj.name = unique_name
-            obj.path = "/".join([os.path.dirname(obj.path), unique_name])
-            obj.save()
-            message = "文件夹：{}重命名为{}".format(path, obj.path)
-
-        elif type == 'file':
-            name = os.path.basename(path)
-            suffix = os.path.splitext(name)[1]
-            dir = os.path.dirname(path)
-            file = get_object_or_404(File, name=name, dir__path=dir, owner=request.user)
-            if not os.path.splitext(new_name)[1]:  # 新名称不含后缀名时添加后缀
-                new_name += suffix
-            file_list = File.objects.filter(dir=file.dir)
-            new_name = get_unique_folder_name(new_name, file_list)
-            file.name = new_name
-            file.save()
-            message = "文件：{}重命名为{}".format(name, new_name)
-
-        return render(request, 'pageJump.html', {'message': message})
-
-
-def delete(request, type, path):
-    if request.method == 'POST':
-        if type == 'folder':
-            obj = Folder.objects.get(path=path, owner=request.user)
-            obj.delete()  # 删除文件夹及其所有子文件夹与文件
-            message = "文件夹：{}删除成功".format(path)
-        elif type == 'file':
-            name = os.path.basename(path)
-            dir = os.path.dirname(path)
-            file = get_object_or_404(File, name=name, dir__path=dir, owner=request.user)
-            file.delete()
-            message = "文件：{} 删除成功".format(name)
-        return render(request, 'pageJump.html', {'message': message})
-
-
-def prev_folder(request):
-    if request.method == 'GET':
-        back_path = os.path.dirname(request.META.get('HTTP_REFERER'))
-        return redirect(back_path)

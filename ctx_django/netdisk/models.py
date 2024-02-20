@@ -1,8 +1,6 @@
 import filetype
 import os
-
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import models
 from PIL import Image
 from account.models import UserModel
@@ -17,19 +15,6 @@ class File(models.Model):
     upload_time = models.DateField(auto_now_add=True)
     file_save = models.FileField(upload_to='uploads/',default='uploads/')
 
-    def __str__(self):
-        return self.get_url_path()
-
-    # def delete(self, using=None, keep_parents=False):
-    #     super().delete(using=None, keep_parents=False)
-    #     self.digest.check_digest()
-
-    def show_name(self):
-        filename, suffix = os.path.splitext(self.name)
-        if len(filename) > 10:
-            return f"{filename[:10]}…{suffix}"
-        return self.name
-
     def get_url_path(self):
         return '/'.join([self.dir.path, self.name])
 
@@ -39,8 +24,6 @@ class File(models.Model):
     def get_file_path(self):
         return os.path.join(MEDIA_ROOT, self.name)
 
-    def remove_file(self):
-        os.remove(self.get_file_path())
 
     def file_type(self):
         file_type = filetype.guess(self.get_file_path())
@@ -61,18 +44,6 @@ class File(models.Model):
             return os.path.join('\media', 'cache', os.path.basename(cache_path))
         return None
 
-    def get_file_size(self):
-        size = self.size
-        if size > 1024 ** 3:  # GB
-            size = '{:.2f} GB'.format(size / (1024 ** 3))
-        elif size > 1024 ** 2:  # MG
-            size = '{:.2f} MB'.format(size / (1024 ** 2))
-        elif size > 1024:
-            size = '{:.2f} KB'.format(size / (1024))
-        else:
-            size = '{:.2f} Bytes'.format(size)
-        return size
-
 
 class Folder(models.Model):
     name = models.CharField('文件夹名称', max_length=32)
@@ -81,23 +52,12 @@ class Folder(models.Model):
     owner = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, default=None)
     creat_time = models.DateField(auto_now_add=True)
 
-    def __str__(self):
-        return self.path
-
-    def show_name(self):
-        if len(self.name) > 10:
-            return self.name[:10] + "…"
-        return self.name
 
     @classmethod
     def create_root(cls, owner):
         if not cls.objects.filter(path='root', owner=owner):
             cls.objects.create(name='root', path='root', parent=None, owner=owner)
 
-    @classmethod
-    def create_public(cls):
-        if not cls.objects.filter(path='public'):
-            cls.objects.create(name='public', path='public', parent=None)
 
 
 class Digest(models.Model):

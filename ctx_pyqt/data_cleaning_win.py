@@ -1,3 +1,7 @@
+#  更新查找结果自动跳转到结果行
+#  search_win代码优化
+#  sub_win代码优化
+
 import datetime
 import itertools
 import os
@@ -9,12 +13,11 @@ import ctx_button_style
 import global_var
 import pdfplumber
 from itertools import product
-from PyQt5 import QtCore, QtGui
-from PyQt5.Qt import QContextMenuEvent, QPixmap, QStandardItem, QTextCursor
+from PyQt5.Qt import QContextMenuEvent, QPixmap
 from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPoint
 from PyQt5.QtWidgets import QWidget, QApplication, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, \
     QPushButton, QLabel, QLineEdit, QTableWidgetSelectionRange, QMenu, QAction, QComboBox, QFileDialog, QMessageBox, \
-    QFileSystemModel, QTreeView, QDockWidget, QTextEdit, QMainWindow, QSpacerItem, QSizePolicy
+    QFileSystemModel, QTreeView, QDockWidget, QTextEdit, QMainWindow, QSpacerItem, QSizePolicy, QAbstractItemView
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from tqdm import tqdm
 from Data_clean.ComboCheckBox import ComboCheckBox
@@ -23,10 +26,11 @@ from Data_clean.stackedWidget import StackedWidget
 from search_win import SearchWin
 from sub_win import SubWin
 
-
 from PyPDF2 import PdfFileWriter, PdfReader, PdfWriter
 # from paddleocr import PaddleOCR
 import logging
+
+
 # from pdf2docx import Converter
 import PyPDF2
 
@@ -40,6 +44,14 @@ class TableWidget(QWidget):
         # self.type_flag：区分sheet和data_list
         self.clipboard = QApplication.clipboard()
         self.__init_ui()
+
+    def clearSelection(self):
+        self.table.clearSelection()
+
+    def setRangeSelected(self, res):
+        self.table.setRangeSelected(QTableWidgetSelectionRange(res[0], res[1], res[0], res[1]), True)
+        item = self.table.item(res[0], res[1])
+        self.table.scrollToItem(item, QAbstractItemView.EnsureVisible)
 
     def __init_ui(self):
         self.table = QTableWidget(100, 20)
@@ -509,6 +521,7 @@ class PdfMenu(QWidget):
         msg_box = QMessageBox(QMessageBox.Information, '完成提示', 'pdf转word完成！')
         msg_box.exec_()
 
+
 class ZScore(QWidget):
     signal_zscore = pyqtSignal(list)
 
@@ -708,7 +721,8 @@ class Menu(QMainWindow):
         self.setStyleSheet("QMainWindow::separator { width: 0px; height: 0px; margin: 0px; padding: 0px; }")
         self.back_win = QWidget(self)
         self.back_win.setObjectName("test")
-        self.back_win.setStyleSheet("#test{border-image: url(C:/Users/Administrator/PycharmProjects/deal_tool/CTX/ctx_pyqt/icon/背景1.webp);}")
+        self.back_win.setStyleSheet(
+            "#test{border-image: url(C:/Users/Administrator/PycharmProjects/deal_tool/CTX/ctx_pyqt/icon/背景1.webp);}")
         self.setCentralWidget(self.back_win)
         self.funcListWidget = ImageLabel(self)
         self.dock_func = QDockWidget("数据清洗", self)
@@ -778,7 +792,7 @@ class Menu(QMainWindow):
         self.dock_info.setMaximumSize(2000, 100)  # 宽度，高度
         self.src_img = None
         self.cur_img = None
-        self.setWindowTitle("CTX")
+        self.setWindowTitle("ADC")
 
     def startProgress(self):
         self.worker = Worker(self.sheet)
@@ -849,9 +863,6 @@ class Menu(QMainWindow):
         self.z = ZScore()
         self.z.show()
         self.z.signal_zscore.connect(self.deal_emit_zscore_slot)
-        # X_test = self.df.iloc[:, -3:]  # 实例化对象
-        # b_test = StandardScaler()  # 训练数据，赋值给b_test
-        # X_result = b_test.fit_transform(X_test)
 
     def deal_emit_zscore_slot(self, res_list):
         X_test = self.df[res_list[:-1]]  # 实例化对象
@@ -953,9 +964,6 @@ class Menu(QMainWindow):
     def changeTableContent(self):
         """根据当前页改变表格的内容"""
         cur_page = self.table_widget.curPage.text()
-        # self.table_widget = TableWidget(self.data_list[start_index:int(cur_page * 30)])  # 实例化表格
-        # self.table_widget.control_signal.connect(self.page_controller)
-        # self.setCentralWidget(self.table_widget)
 
     @timer_decorator
     def open(self):
@@ -1168,7 +1176,6 @@ class Menu(QMainWindow):
                 self.df = self.df[self.df[item].str.contains(res_dict['IlocTableWidget']['文本包含内容'])]
             except:
                 pass
-        # 可视化先不做，做好清洗
         # 数据排序
         # 'DatasortTableWidget': {'A列': '升序', 'B列': '升序', 'C列': '升序', 'D列': '不排序', 'E列': '不排序', 'F列': '不排序'}
         for item in res_dict['DatasortTableWidget'].keys():
@@ -1212,63 +1219,31 @@ class Menu(QMainWindow):
             self.data_list.append(df_row)
         self.input_data()
 
-    def format_table(self, column_name, user_data):
-        # 居中，背景色，选中颜色，字体，字体大小
-        row_count = len(user_data)
-        column_count = len(column_name)
-        udata_len = max([len(i) for i in user_data])
-        coln = column_count if column_count >= udata_len else udata_len
-        for i in range(row_count):
-            for j in range(coln):
-                item = QStandardItem(user_data[i][j])
-                item.setTextAlignment(QtCore.Qt.AlignCenter)
-                # 字体
-                font = QtGui.QFont()
-                font.setFamily("楷体")  # 字体种类
-                font.setPointSize(20)  # 字体大小
-                font.setBold(True)  # 加粗
-                item.setFont(font)
-                brush = QtGui.QBrush(QtGui.QColor(122, 22, 33))
-                brush.setStyle(QtCore.Qt.NoBrush)
-                item.setBackground(brush)
-                self.table.setItem(i, j, item)
-
     def search_show(self):
-        try:
-            self.main_text = self.main_text_edit.toPlainText()
-            self.is_text_edit = 1
-        except:
-            self.is_text_edit = 0
-            self.main_text = self.data_list
-            # 根据内容查找索引，再选中
-        self.search = SearchWin(self.main_text, self.is_text_edit)
+        self.main_text = self.data_list
+        # 根据内容查找索引，再选中
+        self.search = SearchWin(self.main_text)
         self.search.signal_def.connect(self.deal_emit_search_slot)
         self.search.show()
 
     def sub_show(self):
-        try:
-            self.main_text = self.main_text_edit.toPlainText()
-            self.is_text_edit = 1
-        except:
-            self.is_text_edit = 0
-            self.main_text = self.data_list
-        self.SubWin = SubWin(self.main_text, self.is_text_edit)
+        self.main_text = self.data_list
+        self.SubWin = SubWin(self.main_text)
         self.SubWin.signal_def.connect(self.deal_emit_search_slot)
         self.SubWin.signal_sub_def.connect(self.deal_emit_sub_slot)
         self.SubWin.signal_sub_all_def.connect(self.deal_emit_sub_all_slot)
         self.SubWin.show()
 
     def deal_emit_search_slot(self, res):
-        if self.is_text_edit:
-            tc = self.main_text_edit.textCursor()
-            tc.setPosition(res[0], QTextCursor.MoveAnchor)
-            tc.setPosition(res[1], QTextCursor.KeepAnchor)
-            self.main_text_edit.setTextCursor(tc)
-        else:
-            self.table_widget.clearSelection()
-            self.table_widget.setRangeSelected(QTableWidgetSelectionRange(res[0], res[1], res[0], res[1]), True)
+        self.table_widget.clearSelection()
+        self.table_widget.setRangeSelected(res)
 
     def deal_emit_sub_slot(self, res):
+        """
+        替换当前
+        :param res:匹配到的当前结果索引
+        :return:
+        """
         if self.is_text_edit:
             start_index = res[0][0]  # 坐标点索引行坐标
             end_index = res[0][1]  # 坐标点索引列坐标
@@ -1289,16 +1264,21 @@ class Menu(QMainWindow):
             res_count = res[2]  # 当前坐标点在坐标点列表中的索引
             sub_text = res[3]  # 替换内容
             old_text = res[4]
-            tmp_text = self.table.item(row_index, column_index).text().replace(old_text, sub_text)
+            tmp_text = self.table_widget.table.item(row_index, column_index).text().replace(old_text, sub_text)
             # 如果不区分大小写，大写小写文本都要替换成新文本
             item = QTableWidgetItem(tmp_text)
-            self.table.setItem(row_index, column_index, item)
+            self.table_widget.table.setItem(row_index, column_index, item)
             try:
                 self.deal_emit_search_slot(res_index[res_count + 1])  # 选中下一个,最后一个会越界
             except:
                 pass
 
     def deal_emit_sub_all_slot(self, res):
+        """
+        替换所有
+        :param res:匹配到的单元格索引
+        :return:
+        """
         if self.is_text_edit:
             old_text = res[0]
             sub_text = res[1]
@@ -1310,9 +1290,10 @@ class Menu(QMainWindow):
             sub_text = res[1]
             res_index = res[2]  # 坐标点列表
             for index_tuple in res_index:
-                tmp_text = self.table.item(index_tuple[0], index_tuple[1]).text().replace(old_text, sub_text)
+                tmp_text = self.table_widget.table.item(index_tuple[0], index_tuple[1]).text().replace(old_text,
+                                                                                                       sub_text)
                 item = QTableWidgetItem(tmp_text)
-                self.table.setItem(index_tuple[0], index_tuple[1], item)
+                self.table_widget.setItem(index_tuple[0], index_tuple[1], item)
 
 
 if __name__ == "__main__":

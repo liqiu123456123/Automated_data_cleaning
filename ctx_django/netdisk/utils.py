@@ -1,11 +1,6 @@
-# coding = utf-8
-# Dragon's Python3.8 code
-# Created at 2021/5/8 21:50
-# Edit with PyCharm
 import hashlib
 import os
 import shutil
-import uuid
 
 from django.conf import settings
 from netdisk.models import File, Digest
@@ -31,7 +26,6 @@ def handle_upload_files(files, parent_obj, owner=None):
         digest = hashlib.md5()
         # 防止文件重名
         name = remove_blank(file.name)
-        #unique_name = get_unique_file_name(name, file_list)
         temp_name = os.path.join(MEDIA_ROOT, file.name)
         ## 计算文件的MD5并作为文件名保存至MEDIA_ROOT
         with open(temp_name, 'wb+') as destination:
@@ -50,17 +44,6 @@ def handle_upload_files(files, parent_obj, owner=None):
                             size=file.size)
         # 重命名文件
         shutil.move(temp_name,file_path)
-
-
-def get_unique_folder_name(name, content_list):
-    ## 检查是否有重名的文件夹并按顺序生成新名称
-    folder_list = [content.name for content in content_list]
-    if name in folder_list:
-        cont = 1
-        while f'{name}({cont})' in folder_list:
-            cont += 1
-        name = f'{name}({cont})'
-    return name
 
 
 def get_unique_file_name(name, content_list):
