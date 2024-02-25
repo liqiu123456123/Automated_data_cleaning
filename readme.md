@@ -23,7 +23,6 @@
     <li><a href="#贡献">贡献</a></li>
     <li><a href="#许可证">许可证</a></li>
     <li><a href="#联系作者">联系作者</a></li>
-    <li><a href="#赞助作者">赞助作者</a></li>
   </ol>
 </details>
 
@@ -37,7 +36,7 @@
 
 以下是项目的一些特点：
 * 秒开显示大型excel，体验良好！
-* 读取excel文件进度条显示（目前所有的库都不支持这一功能）！
+* 读取excel文件进度条显示
 * 常用数据清洗操作全界面操作，上手简单！
 * 自带云盘功能，跨设备处理数据无担忧！
 * API使用REST-framework框架进行开发，规范易维护！
@@ -45,7 +44,7 @@
 * exe封装，随开随用！
 * 精美QT界面和合理UI设计！
 * 不联网也可使用数据清洗功能！
-* 对你有帮助请狠狠赞助博主！你的赞助对我很重要！
+
 
 1、启动redis
 ![img.png](readme_img%2Fimg.png)
@@ -82,7 +81,9 @@ celery -A ctx_django worker --loglevel=info -P eventlet
 ![img_7.png](readme_img%2Fimg_7.png)
 
 9、点击注册/登陆按钮，开始进行云盘注册
-![img_8.png](readme_img%2Fimg_8.png)
+![img_new_8.png](readme_img%2Fimg_new_8.png)
+
+![img_new_9.png](readme_img%2Fimg_new_9.png)
 10、切换到注册界面，进行注册
 
 填入邮箱，收到验证码后，输入验证码
@@ -176,13 +177,6 @@ celery -A ctx_django worker --loglevel=info -P eventlet
 
 
 
-<!-- 赞助作者 -->
-## 赞助作者
 
-不用客气，可尽情赞助作者。你的每一笔赞助都是对作者莫大的鼓励。
-赞助后可开启VIP待遇，进行项目运行辅助和代码答疑。
-这里放收款码
-
-<p align="right">(<a href="#top">返回顶部</a>)</p>
 
 
