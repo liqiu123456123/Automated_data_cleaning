@@ -56,6 +56,7 @@ python .\manage.py runserver
 ![img_1.png](readme_img%2Fimg_1.png)
 
 3、启动celery
+
 celery -A ctx_django worker --loglevel=info -P eventlet
 
 
