@@ -13,26 +13,33 @@ class SearchWin(QWidget):
         super().__init__()
         self.main_text = main_text
         self.search_text = None
+        self.count = 0
+        self.init_ui()
+
+    def init_ui(self):
         self.setWindowTitle("查找")
-        main_layout = QVBoxLayout()
-        self.setLayout(main_layout)
+        self.resize(450, 170)
+
+        main_layout = QVBoxLayout(self)  # 设置布局
+
+        # 创建第一行水平布局
         h_layout_one = QHBoxLayout()
-        h_layout_two = QHBoxLayout()
         self.lineEdit = LineEdit(self)
+        self.lineEdit.setPlaceholderText('查找内容')
+        self.lineEdit.setFixedSize(260, 33)  # 设置文本输入框的大小
         self.button = PushButton('查找下一个', self)
-        self.button.clicked.connect(self.search)
+        self.button.clicked.connect(self.search)  # 连接按钮点击事件到search方法
         h_layout_one.addWidget(self.lineEdit)
         h_layout_one.addWidget(self.button)
         main_layout.addLayout(h_layout_one)
+
+        # 创建第二行水平布局
+        h_layout_two = QHBoxLayout()
         self.check = CheckBox("区分大小写", self)
         self.re_check = CheckBox("正则表达式", self)
         h_layout_two.addWidget(self.check)
         h_layout_two.addWidget(self.re_check)
         main_layout.addLayout(h_layout_two)
-        self.count = 0
-        self.lineEdit.setPlaceholderText('查找内容')
-        self.resize(450, 170)
-        self.lineEdit.setFixedSize(260, 33)
 
     def search(self):
         self.search_text = self.lineEdit.text()
