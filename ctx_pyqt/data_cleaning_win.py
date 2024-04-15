@@ -1,7 +1,3 @@
-#  更新查找结果自动跳转到结果行
-#  search_win代码优化
-#  sub_win代码优化
-
 import datetime
 import itertools
 import os
@@ -736,10 +732,11 @@ class Menu(QMainWindow):
         z_score_button = ButtonImage("数据标准化", 'icon/数据标准化.png')
         pdf_button = ButtonImage("PDF文件处理", 'icon/PDF.png')
         data_check_button = ButtonImage("数据概况", 'icon/数据概况.png')
+        save_button = ButtonImage("保存", 'icon/保存.png')
         for item in (
                 search_button, sub_button, multi_file_button, z_score_button,
                 pdf_button,
-                data_check_button):
+                data_check_button,save_button):
             item.setFixedSize(100, 100)
             item.setStyleSheet(ctx_button_style.button_style())
         # 添加到布局
@@ -750,6 +747,7 @@ class Menu(QMainWindow):
         layout.addWidget(z_score_button, 0, Qt.AlignLeft)
         layout.addWidget(pdf_button, 0, Qt.AlignLeft)
         layout.addWidget(data_check_button, 0, Qt.AlignLeft)
+        layout.addWidget(save_button, 0, Qt.AlignLeft)
         layout.addSpacerItem(spacer)
         layout.setContentsMargins(0, 0, 0, 0)
         title_win.setLayout(layout)
