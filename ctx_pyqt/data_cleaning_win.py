@@ -761,6 +761,7 @@ class Menu(QMainWindow):
         pdf_button.clicked.connect(self.show_pdf_mean)
         z_score_button.clicked.connect(self.show_z_score)
         data_check_button.clicked.connect(self.show_data_info)
+        as_save_button.clicked.connect(self.as_save)
         self.dock_func.setMinimumSize(100, 150)  # 宽度，高度
         self.dock_func.setMaximumSize(2600, 1600)  # 宽度，高度
         self.dock_func.setTitleBarWidget(title_win)
@@ -1056,39 +1057,44 @@ class Menu(QMainWindow):
         pass
 
     def as_save(self):
-        # 重新选择文件路径，重新确定文件名
         """文件另存对话框"""
-        file_path, file_type = QFileDialog.getSaveFileName(self, '文件保存', r'C:\Users\Administrator\Desktop\CTX',
-                                                           '文本文档(*.txt);;Excel 工作簿(*.xlsx);;Excel 97-2003工作簿(*.xls;;CSV (逗号分隔)(*.csv')
-        file_end = self.file_path.split(".")[-1]
-        # 读取表格数据，再存储到原路径
-        row_count = self.table.model().rowCount()
-        column_count = self.table.model().columnCount()
-        # 用二维列表存储
-        self.as_save_date = []
-        if file_end == "txt":
-            a = self.main_text_edit.toPlainText()
-            self.assave_date = a.split("\n")
-        else:
-            for i in range(row_count):
-                line_list = []
-                for j in range(column_count):
-                    item = self.table.model().item(i, j)
-                    text = item.text()
-                    line_list.append(text)
-                self.as_save_date.append(line_list)
-        if file_end in ("xlsx", "xls"):
-            df = pd.DataFrame(self.self.as_save_date)
-            df = df.reset_index(drop=True)
-            df.to_excel(file_path, index=False, header=None)
-        elif file_end == "csv":
-            df = pd.DataFrame(self.self.as_save_date)
-            df = df.reset_index(drop=True)
-            df.to_csv(file_path, index=False, header=None)
-        elif file_end == "txt":
-            df = pd.DataFrame(self.assave_date)
-            df = df.reset_index(drop=True)
-            df.to_csv(file_path, sep='\t', index=False, header=None)
+        # 显示文件另存对话框
+        options = '文本文档(*.txt);;Excel 工作簿(*.xlsx);;CSV (逗号分隔)(*.csv)'
+        file_path, _ = QFileDialog.getSaveFileName(self, '文件保存', '', options)
+
+        if file_path:
+            # 获取文件扩展名
+            file_end = file_path.split(".")[-1].lower()
+
+            # 根据文件扩展名决定保存格式
+            if file_end == 'txt':
+                self.save_as_txt(file_path)
+            elif file_end in ['xlsx', 'xls']:
+                self.save_as_excel(file_path)
+            elif file_end == 'csv':
+                self.save_as_csv(file_path)
+            else:
+                print("不支持的文件格式")
+                # 读取表格数据，再存储到原路径
+
+    def save_as_txt(self, file_path):
+        """保存为文本文件"""
+        with open(file_path, 'w', encoding='utf-8') as f:
+            for row in self.data_list:
+                f.write('\t'.join(str(item) for item in row) + '\n')
+        print(f"数据已保存为文本文件到 {file_path}")
+
+    def save_as_csv(self, file_path):
+        """保存为CSV文件"""
+        df = pd.DataFrame(self.data_list)
+        df.to_csv(file_path, index=False, encoding='utf-8-sig')
+        print(f"数据已保存为CSV文件到 {file_path}")
+
+    def save_as_excel(self, file_path):
+        """保存为Excel文件"""
+        df = pd.DataFrame(self.data_list)
+        df.to_excel(file_path, index=False, engine='openpyxl')
+        print(f"数据已保存为Excel文件到 {file_path}")
 
     @timer_decorator
     def deal_emit_start_slot(self, res_dict):
