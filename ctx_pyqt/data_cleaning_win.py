@@ -25,7 +25,9 @@ from sub_win import SubWin
 from PyPDF2 import PdfFileWriter, PdfReader, PdfWriter
 # from paddleocr import PaddleOCR
 import logging
-
+import csv
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 # from pdf2docx import Converter
 import PyPDF2
@@ -764,6 +766,7 @@ class Menu(QMainWindow):
         z_score_button.clicked.connect(self.show_z_score)
         data_check_button.clicked.connect(self.show_data_info)
         as_save_button.clicked.connect(self.as_save)
+        save_button.clicked.connect(self.save_file)
         self.dock_func.setMinimumSize(100, 150)  # 宽度，高度
         self.dock_func.setMaximumSize(2600, 1600)  # 宽度，高度
         self.dock_func.setTitleBarWidget(title_win)
@@ -1029,32 +1032,36 @@ class Menu(QMainWindow):
             self.setCentralWidget(self.table_widget)
 
     def save_file(self):
-        # 读取表格数据，再存储到原路径
-        row_count = self.table.model().rowCount()
-        column_count = self.table.model().columnCount()
-        # 用二维列表存储
-        self.save_date = []
-        for i in range(row_count):
-            line = []
-            for j in range(column_count):
-                item = self.table.model().item(i, j)
-                text = item.text()
-                line.append(text)
-            self.save_date.append(line)
-        file_end = self.file_path.split(".")[-1]
-        if file_end in ("xlsx", "xls"):
-            df = pd.DataFrame(self.save_date)
-            df = df.reset_index(drop=True)
-            df.to_excel(self.file_path, index=False, header=None)
-        elif file_end == "csv":
-            df = pd.DataFrame(self.save_date)
-            df = df.reset_index(drop=True)
-            df.to_csv(self.file_path, index=False, header=None)
-        elif file_end == "txt":
-            df = pd.DataFrame(self.save_date)
-            df = df.reset_index(drop=True)
-            df.to_csv(self.file_path, sep='\t', index=False, header=None)
+        # 判断文件类型
+        if self.file_path.endswith('.csv'):
+            self._save_as_csv()
+        elif self.file_path.endswith('.xlsx'):
+            self._save_as_xlsx()
+        else:
+            raise ValueError("Unsupported file format. Only CSV and XLSX are supported.")
 
+    def _save_as_csv(self):
+        with open(self.file_path, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            # 写入列表中的每个元组（即每行数据）
+            writer.writerows(self.data_list)
+            print("Saved")
+    def _save_as_xlsx(self):
+        wb = Workbook()
+        ws = wb.active
+
+        # 获取需要的列数
+        max_columns = max(len(row) for row in self.data_list)
+
+        # 写入数据到工作表
+        for row_index, row_data in enumerate(self.data_list, start=1):
+            for col_index, value in enumerate(row_data, start=1):
+                cell_ref = get_column_letter(col_index) + str(row_index)
+                ws[cell_ref] = value
+
+                # 保存工作簿到文件
+        wb.save(self.file_path)
+        print("Saved1111")
     def new_file(self):
         pass
 
