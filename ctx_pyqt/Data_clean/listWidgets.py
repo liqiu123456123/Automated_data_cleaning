@@ -118,7 +118,7 @@ class Usebutton(QWidget):
         grid = QGridLayout()
         self.parent = parent
         self.use_list = UsedListWidget(parent)
-        self.button = PushButton("CTX,启动！", self)
+        self.button = PushButton("ADC,启动！", self)
         self.button.clicked.connect(self.ctx_start)
         # self.button.setStyleSheet("background-color: #BFEFFF;")
         grid.addWidget(self.use_list, 0, 0)
