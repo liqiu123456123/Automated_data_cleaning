@@ -11,14 +11,15 @@ class MainWindow(QWidget):
     def initUI(self):
         # 创建主垂直布局
         main_layout = QVBoxLayout(self)
-
+        main_layout.setContentsMargins(0, 0, 0, 0)  # 设置布局的四个间距都为0
+        self.resize(1000, 860)
         # 创建第一个QWidget，背景色为绿色，固定高度为60
-        green_widget = QWidget()
-        green_widget.setStyleSheet("background-color: green;")
-        green_widget.setFixedHeight(60)
+        top_widget = QWidget()
+        top_widget.setStyleSheet("background-color: blue;")
+        top_widget.setFixedHeight(60)
 
         # 添加到主布局
-        main_layout.addWidget(green_widget)
+        main_layout.addWidget(top_widget)
 
         # 创建第二个QWidget，用于包含win1和win2的QHBoxLayout
         second_widget = QWidget()
@@ -63,7 +64,6 @@ class MainWindow(QWidget):
 
         # 设置窗口属性
         self.setWindowTitle('PyQt QStackedWidget 示例')
-        self.setGeometry(300, 300, 300, 200)
         self.show()
 
 
