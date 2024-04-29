@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPu
     QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-
+from PyQt5.QtGui import QFont
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -17,7 +17,7 @@ class MainWindow(QWidget):
         self.resize(1000, 860)
         # 创建第一个QWidget，背景色为绿色，固定高度为60
         top_widget = QWidget()
-        top_widget.setStyleSheet("background-color: yellow;")
+        top_widget.setStyleSheet("background-color:#000000;")
         top_widget.setFixedHeight(60)
         # 创建一个横向布局
         h_layout = QHBoxLayout()
@@ -33,6 +33,7 @@ class MainWindow(QWidget):
         h_layout.setSpacing(20)
         # 创建文本标签并添加到横向布局
         text_label = QLabel("欢迎使用ADC！")
+        text_label.setStyleSheet("QLabel { color: white; }")
         h_layout.addWidget(text_label)
 
         # 创建一个压缩空间控件并添加到横向布局
@@ -51,11 +52,18 @@ class MainWindow(QWidget):
 
         # 创建win1，固定宽度为60
         win1 = QWidget()
-        win1.setFixedWidth(100)
-        win1.setStyleSheet("background-color: red;")
+        win1.setFixedWidth(90)
+        win1.setStyleSheet("background-color: #000000;")
         # 创建两个按钮
         button1 = QPushButton("界面1", win1)
         button2 = QPushButton("界面2", win1)
+        # 设置字体样式
+        font = QFont('微软雅黑', 12, QFont.Bold)  # 字体名称、大小、加粗
+        button1.setFont(font)
+        button2.setFont(font)
+        text_label.setFont(font)
+        button1.setStyleSheet("QPushButton { color: white; }")
+        button2.setStyleSheet("QPushButton { color: white; }")
         spacer_item2 = QSpacerItem(40, 20, QSizePolicy.Minimum,QSizePolicy.Expanding)
         # 垂直布局用于放置按钮
         button_layout = QVBoxLayout(win1)
@@ -68,7 +76,7 @@ class MainWindow(QWidget):
 
         # 创建win2的QStackedWidget
         win2 = QStackedWidget()
-        win2.setStyleSheet("background-color: blue;")
+        win2.setStyleSheet("background-color: #ffffff;")
         # 创建两个界面，这里用QLabel代替其他复杂界面
         label1 = QLabel("这是界面1的内容", win2)
         label2 = QLabel("这是界面2的内容", win2)
