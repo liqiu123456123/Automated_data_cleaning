@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPu
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QFont
-
+from mian_win_data_cleaning_win import CtxUi
+from mian_win_login import LoginMainWindow
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -55,8 +56,8 @@ class MainWindow(QWidget):
         win1.setFixedWidth(90)
         win1.setStyleSheet("background-color: #000000;")
         # 创建两个按钮
-        button1 = QPushButton("界面1", win1)
-        button2 = QPushButton("界面2", win1)
+        button1 = QPushButton("ADC", win1)
+        button2 = QPushButton("登陆", win1)
         # 设置字体样式
         font = QFont('微软雅黑', 12, QFont.Bold)  # 字体名称、大小、加粗
         button1.setFont(font)
@@ -78,12 +79,12 @@ class MainWindow(QWidget):
         win2 = QStackedWidget()
         win2.setStyleSheet("background-color: #ffffff;")
         # 创建两个界面，这里用QLabel代替其他复杂界面
-        label1 = QLabel("这是界面1的内容", win2)
-        label2 = QLabel("这是界面2的内容", win2)
+        self.ctx_ui = CtxUi()
+        self.login_res = LoginMainWindow()
 
         # 将界面添加到堆叠控件
-        win2.addWidget(label1)
-        win2.addWidget(label2)
+        win2.addWidget(self.ctx_ui)
+        win2.addWidget(self.login_res)
 
         # 将win2添加到水平布局
         second_layout.addWidget(win2)
@@ -98,7 +99,7 @@ class MainWindow(QWidget):
         second_layout.setSpacing(0)
         second_layout.setContentsMargins(0, 0, 0, 0)
         # 设置窗口属性
-        self.setWindowTitle('PyQt QStackedWidget 示例')
+        self.setWindowTitle('导航框架')
         self.show()
 
 

@@ -18,9 +18,8 @@ class Widget_web(QFrame):
 
 
 class LoginWin(QWidget):
-    def __init__(self, parent):
+    def __init__(self):
         super().__init__()
-        self.parent = parent
         self.request_api = None
         self.init_ui()
 
@@ -133,9 +132,8 @@ class ResWindow(QWidget):
 
 
 class LoginMainWindow(QWidget):
-    def __init__(self, parent):
+    def __init__(self):
         super().__init__()
-        self.parent = parent
         self.initUI()
 
     def initUI(self):
@@ -145,7 +143,7 @@ class LoginMainWindow(QWidget):
         self.setLayout(layout)
         self.stack = QStackedWidget()
         layout.addWidget(self.stack)
-        self.loginWidget = LoginWin(self.parent)
+        self.loginWidget = LoginWin()
         self.stack.addWidget(self.loginWidget)
         self.registerWidget = ResWindow()
         self.stack.addWidget(self.registerWidget)
