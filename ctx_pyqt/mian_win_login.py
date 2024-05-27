@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QLabel, QWidget, QPushButton, QMessageBox, QFrame, Q
 from qfluentwidgets import LineEdit, PasswordLineEdit, PrimaryPushButton, FluentIcon as FIF
 from mian_win_web import WebUi
 from project_requests import Requests_Api
-
+from sub_win import SubWin
 
 class Widget_web(QFrame):
     def __init__(self, text, parent, username, password):
@@ -49,13 +49,16 @@ class LoginWin(QWidget):
     def login(self):
         username = self.username.text()
         password = self.password.text()
-        url = "http://127.0.0.1:8000/login"
-        self.request_api = Requests_Api(username, password)
-        response = self.request_api.login(url, username, password)
-        if "用户登陆" not in response.text:
-            self.videoInterface2 = Widget_web('Video Interface2', self, username, password)
-            self.parent.addSubInterface(self.videoInterface2, FIF.CLOUD, '云盘')
-            self.close()
+        self.t = SubWin()
+        self.t.show()
+        self.close()
+        # url = "http://127.0.0.1:8000/login"
+        # self.request_api = Requests_Api(username, password)
+        # response = self.request_api.login(url, username, password)
+        # if "用户登陆" not in response.text:
+        #     self.videoInterface2 = Widget_web('Video Interface2', self, username, password)
+        #     self.parent.addSubInterface(self.videoInterface2, FIF.CLOUD, '云盘')
+        #     self.close()
 
 
 class ResWindow(QWidget):

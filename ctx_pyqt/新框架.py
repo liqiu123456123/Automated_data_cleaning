@@ -18,7 +18,7 @@ class MainWindow(QWidget):
         self.resize(1000, 860)
         # 创建第一个QWidget，背景色为绿色，固定高度为60
         top_widget = QWidget()
-        top_widget.setStyleSheet("background-color:#000000;")
+        top_widget.setStyleSheet("background-color:#007BFF;")
         top_widget.setFixedHeight(60)
         # 创建一个横向布局
         h_layout = QHBoxLayout()
@@ -54,7 +54,7 @@ class MainWindow(QWidget):
         # 创建win1，固定宽度为60
         win1 = QWidget()
         win1.setFixedWidth(90)
-        win1.setStyleSheet("background-color: #000000;")
+        win1.setStyleSheet("background-color: #007BFF;")
         # 创建两个按钮
         button1 = QPushButton("ADC", win1)
         button2 = QPushButton("登陆", win1)
@@ -99,7 +99,7 @@ class MainWindow(QWidget):
         second_layout.setSpacing(0)
         second_layout.setContentsMargins(0, 0, 0, 0)
         # 设置窗口属性
-        self.setWindowTitle('导航框架')
+        self.setWindowTitle('ADC')
         self.show()
 
 
