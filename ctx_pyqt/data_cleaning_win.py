@@ -1107,134 +1107,119 @@ class Menu(QMainWindow):
 
     @timer_decorator
     def deal_emit_start_slot(self, res_dict):
-        # 缺失值处理
-        # 考虑各个选项的互斥关系
-        # {'NanTableWidget': {'填充为指定值': '231', '删除空值所在的行': '是', '删除空值所在的列': '是', '填充为其他': '前一个观测值'}}
         try:
-            if res_dict['NanTableWidget']['删除空值所在的行'] == "是":
-                # 删除包含空值的行
+            # 缺失值处理
+            nan_options = res_dict['NanTableWidget']
+            if nan_options['删除空值所在的行'] == "是":
                 self.df = self.df.dropna()
-            if res_dict['NanTableWidget']['删除空值所在的列'] == "是":
-                # 删除包含空值的列
+            if nan_options['删除空值所在的列'] == "是":
                 self.df = self.df.dropna(axis=1)
-            if res_dict['NanTableWidget']['填充为指定值'] != "":
-                self.df = self.df.fillna(value=res_dict['NanTableWidget']['填充为指定值'])
-            if res_dict['NanTableWidget']['填充为其他'] not in ["", "否"]:
-                if res_dict['NanTableWidget']['填充为其他'] == "前一个观测值":
+            if nan_options['填充为指定值']:
+                self.df = self.df.fillna(value=nan_options['填充为指定值'])
+            if nan_options['填充为其他'] not in ["", "否"]:
+                fill_method = nan_options['填充为其他']
+                if fill_method == "前一个观测值":
                     self.df = self.df.fillna(method='ffill')
-                if res_dict['NanTableWidget']['填充为其他'] == "后一个观测值":
+                elif fill_method == "后一个观测值":
                     self.df = self.df.fillna(method='bfill')
-                if res_dict['NanTableWidget']['填充为其他'] == "平均值":
+                elif fill_method == "平均值":
                     self.df = self.df.fillna(self.df.mean())
-                if res_dict['NanTableWidget']['填充为其他'] == "中位数":
+                elif fill_method == "中位数":
                     self.df = self.df.fillna(self.df.median())
-                if res_dict['NanTableWidget']['填充为其他'] == "众数":
-                    # 分别对每列使用众数填充缺失值
-                    for column in self.df.columns:
-                        mode = self.df[column].mode()[0]  # 获取众数
-                        self.df[column].fillna(mode, inplace=True)
-                self.df = self.df.fillna(value=res_dict['NanTableWidget']['填充为其他'])
-        except:
-            pass
-        # 重复值处理
-        try:
-            if res_dict['RepeatTabledWidget']['删除重复行'] == "所有列重复":
+                elif fill_method == "众数":
+                    self.df = self.df.apply(lambda col: col.fillna(col.mode()[0]), axis=0)
+
+            # 重复值处理
+            repeat_options = res_dict['RepeatTabledWidget']
+            if repeat_options['删除重复行'] == "所有列重复":
                 self.df = self.df.drop_duplicates()
-            if res_dict['RepeatTabledWidget']['删除重复行'][:-2] in self.list1:
-                self.df = self.df.drop_duplicates(res_dict['RepeatTabledWidget']['删除重复行'][:-2])
-            if res_dict['RepeatTabledWidget']['删除重复列'] == "是":
+            elif repeat_options['删除重复行'][:-2] in self.list1:
+                self.df = self.df.drop_duplicates(subset=repeat_options['删除重复行'][:-2])
+            if repeat_options['删除重复列'] == "是":
                 self.df = self.df.T.drop_duplicates().T
-        except:
-            pass
-        # 重命名列名
-        try:
-            if res_dict['ColTabledWidget']['列名重命名'] != "":
-                new_col_name = res_dict['ColTabledWidget']['列名重命名'].split(",")
-                self.df.columns = new_col_name
-        except:
-            pass
-        # 类型转换
-        try:
-            type_dict = res_dict['FormatTabledWidget']
-            type_to_fun = {"小数类型": 'float64', '整数类型': 'int64', '文本': 'str'}
-            for item in self.list2:
-                if type_dict[item] != "不修改":
-                    if type_dict[item] != "日期时间":
-                        self.df[item] = self.df[item].astype(eval(type_to_fun[type_dict[item]]))
+
+            # 重命名列名
+            col_options = res_dict['ColTabledWidget']
+            if col_options['列名重命名']:
+                new_col_names = col_options['列名重命名'].split(",")
+                self.df.columns = new_col_names
+
+            # 类型转换
+            format_options = res_dict['FormatTabledWidget']
+            type_map = {"小数类型": 'float64', '整数类型': 'int64', '文本': 'str'}
+            for col in self.list2:
+                col_type = format_options.get(col, "不修改")
+                if col_type != "不修改":
+                    if col_type == "日期时间":
+                        self.df[col] = pd.to_datetime(self.df[col])
                     else:
-                        self.df[item] = pd.to_datetime(self.df[item])
-        except:
-            pass
-        """'IlocTableWidget': {'': False, '大于': '11', '介于下限': '22', '介于上限': '33', '小于': '2112', '文本包含内容': 'bnbm,', '数值范围选择字段': 'A列;B列;C列;', 
-        '文本包含字段': 'C列;D列;'}}"""
-        # 数据筛选
-        # 大于
-        for item in res_dict['IlocTableWidget']['数值范围选择字段'].split(';'):
-            try:
-                self.df = self.df[self.df[item] > float(res_dict['IlocTableWidget']['大于'])]
-            except:
-                pass
-        # 小于
-        for item in res_dict['IlocTableWidget']['数值范围选择字段'].split(';'):
-            try:
-                self.df = self.df[self.df[item] < float(res_dict['IlocTableWidget']['小于'])]
-            except:
-                pass
-        # 介于
-        for item in res_dict['IlocTableWidget']['数值范围选择字段'].split(';'):
-            try:
-                self.df = self.df[(self.df[item] > float(res_dict['IlocTableWidget']['介于下限'])) & (
-                        self.df[item] < float(res_dict['IlocTableWidget']['介于上限']))]
-            except:
-                pass
-        # 文本包含
-        for item in res_dict['IlocTableWidget']['文本包含字段'].split(';'):
-            try:
-                self.df = self.df[self.df[item].str.contains(res_dict['IlocTableWidget']['文本包含内容'])]
-            except:
-                pass
-        # 数据排序
-        # 'DatasortTableWidget': {'A列': '升序', 'B列': '升序', 'C列': '升序', 'D列': '不排序', 'E列': '不排序', 'F列': '不排序'}
-        for item in res_dict['DatasortTableWidget'].keys():
-            if res_dict['DatasortTableWidget'][item] != "不排序":
-                try:
-                    self.df = self.df.sort_values(by=item, ascending=True if res_dict['DatasortTableWidget'][
-                                                                                 item] == "升序" else False)
-                except KeyError:
-                    # 处理整数列名的情况
-                    self.df = self.df.sort_values(by=int(item), ascending=True if res_dict['DatasortTableWidget'][
-                                                                                      item] == "升序" else False)
-        # 异常值处理
-        # 'DataoverTableWidget': {'A列': '填为平均值', 'B列': '填为平均值', 'C列': '不处理', 'D列': '不处理', 'E列': '填为平均值', 'F列': '删除该行'}
-        for item in res_dict['DataoverTableWidget'].keys():
-            if res_dict['DataoverTableWidget'][item] != "不处理":
-                mean = self.df[item].mean()
-                std_dev = self.df[item].std()
-                lower_bound = mean - 3 * std_dev
-                upper_bound = mean + 3 * std_dev
-                # ['不处理', '删除该行', '填为0', '填为平均值', '填为中位数', '填为众数']
-                if res_dict['DataoverTableWidget'][item] == "删除该行":
-                    self.df.drop(self.df[(self.df[item] < lower_bound) | (self.df[item] > upper_bound)].index,
-                                 inplace=True)
-                if res_dict['DataoverTableWidget'][item] == "填为0":
-                    self.df.loc[(self.df[item] < lower_bound) | (self.df[item] > upper_bound), item] = 0
-                if res_dict['DataoverTableWidget'][item] == "填为平均值":
-                    self.df[(self.df[item] < lower_bound) | (self.df[item] > upper_bound)] = mean
-                if res_dict['DataoverTableWidget'][item] == "填为中位数":
-                    median = self.df[item].median()
-                    self.df[(self.df[item] < lower_bound) | (self.df[item] > upper_bound)] = median
-                if res_dict['DataoverTableWidget'][item] == "填为众数":
-                    mode = self.df['数值'].mode()[0]  # 获取众数，可能存在多个众数，因此需要使用索引[0]获取第一个众数
-                    self.df[(self.df[item] < lower_bound) | (self.df[item] > upper_bound)] = mode
-        print("信号接收成功", res_dict)
-        total_rows = self.df.shape[0]
-        column_names = list(self.df.columns)
-        self.data_list = []
-        self.data_list.insert(0, column_names)
-        for i in range(total_rows):
-            df_row = self.df.iloc[i].tolist()
-            self.data_list.append(df_row)
-        self.input_data()
+                        self.df[col] = self.df[col].astype(type_map[col_type])
+
+            # 数据筛选
+            iloc_options = res_dict['IlocTableWidget']
+            num_fields = iloc_options['数值范围选择字段'].split(';')
+            for field in num_fields:
+                if iloc_options['大于']:
+                    try:
+                        self.df = self.df[self.df[field] > float(iloc_options['大于'])]
+                    except KeyError:
+                        pass
+                if iloc_options['小于']:
+                    try:
+                        self.df = self.df[self.df[field] < float(iloc_options['小于'])]
+                    except KeyError:
+                        pass
+                if iloc_options['介于下限'] and iloc_options['介于上限']:
+                    try:
+                        self.df = self.df[(self.df[field] > float(iloc_options['介于下限'])) & (
+                                    self.df[field] < float(iloc_options['介于上限']))]
+                    except KeyError:
+                        pass
+
+            text_fields = iloc_options['文本包含字段'].split(';')
+            for field in text_fields:
+                if iloc_options['文本包含内容']:
+                    try:
+                        self.df = self.df[self.df[field].str.contains(iloc_options['文本包含内容'])]
+                    except KeyError:
+                        pass
+
+            # 数据排序
+            sort_options = res_dict['DatasortTableWidget']
+            for field, order in sort_options.items():
+                if order != "不排序":
+                    try:
+                        self.df = self.df.sort_values(by=field, ascending=(order == "升序"))
+                    except KeyError:
+                        self.df = self.df.sort_values(by=int(field), ascending=(order == "升序"))
+
+            # 异常值处理
+            outlier_options = res_dict['DataoverTableWidget']
+            for field, action in outlier_options.items():
+                if action != "不处理":
+                    mean = self.df[field].mean()
+                    std_dev = self.df[field].std()
+                    lower_bound = mean - 3 * std_dev
+                    upper_bound = mean + 3 * std_dev
+                    if action == "删除该行":
+                        self.df = self.df[(self.df[field] >= lower_bound) & (self.df[field] <= upper_bound)]
+                    elif action == "填为0":
+                        self.df.loc[(self.df[field] < lower_bound) | (self.df[field] > upper_bound), field] = 0
+                    elif action == "填为平均值":
+                        self.df.loc[(self.df[field] < lower_bound) | (self.df[field] > upper_bound), field] = mean
+                    elif action == "填为中位数":
+                        median = self.df[field].median()
+                        self.df.loc[(self.df[field] < lower_bound) | (self.df[field] > upper_bound), field] = median
+                    elif action == "填为众数":
+                        mode = self.df[field].mode()[0]
+                        self.df.loc[(self.df[field] < lower_bound) | (self.df[field] > upper_bound), field] = mode
+
+            # 更新数据列表
+            self.data_list = [list(self.df.columns)] + self.df.values.tolist()
+            self.input_data()
+            print("信号接收成功", res_dict)
+        except Exception as e:
+            print(f"Error processing data: {e}")
 
     def search_show(self):
         self.main_text = self.data_list
